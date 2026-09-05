@@ -8,8 +8,8 @@ export const runtime = "nodejs";
 const CATEGORIES: Array<{ id: string; name: string }> = [
   { id: "news", name: "News" },
   { id: "sports", name: "Sports" },
-  { id: "movies", name: "Movies" },
-  { id: "series", name: "Series" },
+  { id: "movies", name: "Filmler" },
+  { id: "series", name: "Diziler" },
   { id: "entertainment", name: "Entertainment" },
   { id: "music", name: "Music" },
   { id: "documentary", name: "Documentary" },

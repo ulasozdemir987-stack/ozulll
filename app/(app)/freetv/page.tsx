@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Tv, Oynat, Radio, Heart } from "lucide-react";
+import { Tv, Play, Radio, Heart } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { PosterGridSkeleton } from "@/components/ui/Skeleton";
@@ -22,8 +22,8 @@ export default function FreeTvPage() {
   const query = filter.query;
   const [visible, setVisible] = useState(PAGE);
 
-  const { data: catData } = useQuery({ queryKey: ["freetv", "cats"], queryFn: api.freeTvKategoriler });
-  const { data: countryData } = useQuery({ queryKey: ["freetv", "countries"], queryFn: api.freeTvÜlkeler });
+  const { data: catData } = useQuery({ queryKey: ["freetv", "cats"], queryFn: api.freeTvCategories });
+  const { data: countryData } = useQuery({ queryKey: ["freetv", "countries"], queryFn: api.freeTvCountries });
 
   const pickerOptions = useMemo(() => {
     const src = mode === "country" ? countryData?.countries : catData?.categories;
@@ -155,7 +155,7 @@ function FreeChannelTile({ channel }: { channel: FreeChannel }) {
       {channel.group && <p className="text-[11px] text-fog-500">{channel.group}</p>}
       <span className="absolute inset-0 grid place-items-center rounded-2xl bg-ink-950/40 opacity-0 transition-opacity group-hover:opacity-100">
         <span className="grid h-11 w-11 place-items-center rounded-full bg-iris-400 text-ink-950">
-          <Oynat className="h-5 w-5 translate-x-0.5 fill-ink-950" />
+          <Play className="h-5 w-5 translate-x-0.5 fill-ink-950" />
         </span>
       </span>
     </Link>

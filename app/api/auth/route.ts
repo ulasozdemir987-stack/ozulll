@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
   if (!baseUrl || !username || !password) {
     return NextResponse.json(
-      { error: "Server URL, username and password are all required." },
+      { error: "Sunucu adresi, username and password are all required." },
       { status: 400 },
     );
   }

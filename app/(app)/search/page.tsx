@@ -6,7 +6,7 @@ import { Search as SearchIcon } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { PosterCard } from "@/components/catalog/PosterCard";
 import { PosterGridSkeleton } from "@/components/ui/Skeleton";
-import { useVodStreams, useSeriesList, useCanlıStreams } from "@/lib/hooks";
+import { useVodStreams, useSeriesList, useLiveStreams } from "@/lib/hooks";
 import { useUI } from "@/store/ui";
 import { cleanName, yearFrom } from "@/lib/utils";
 
@@ -24,7 +24,7 @@ function SearchInner() {
 
   const movies = useVodStreams();
   const series = useSeriesList();
-  const live = useCanlıStreams();
+  const live = useLiveStreams();
 
   const term = q.trim().toLowerCase();
   const match = (name: string) => term.length > 0 && cleanName(name).toLowerCase().includes(term);
@@ -53,11 +53,11 @@ function SearchInner() {
       </div>
 
       {term.length === 0 ? (
-        <p className="px-8 py-24 text-center text-sm text-fog-500">Aramak için yazmaya başlayın.</p>
+        <p className="px-8 py-24 text-center text-sm text-fog-500">Start typing to search everything.</p>
       ) : loading ? (
         <div className="py-5"><PosterGridSkeleton /></div>
       ) : total === 0 ? (
-        <p className="px-8 py-24 text-center text-sm text-fog-500">“{q}” için sonuç bulunamadı.</p>
+        <p className="px-8 py-24 text-center text-sm text-fog-500">No results for “{q}”.</p>
       ) : (
         <div className="space-y-10 pb-12">
           <ResultGrid title="Filmler" count={mr.length}>
@@ -70,7 +70,7 @@ function SearchInner() {
               <PosterCard key={s.series_id} href={`/series/${s.series_id}`} item={{ id: s.series_id, name: s.name, poster: s.cover, rating: s.rating, year: yearFrom(s.releaseDate, s.name) }} />
             ))}
           </ResultGrid>
-          <ResultGrid title="Canlı Channels" count={lr.length}>
+          <ResultGrid title="Canlı Kanallar" count={lr.length}>
             {lr.map((c) => (
               <PosterCard key={c.stream_id} href={`/watch?type=live&id=${c.stream_id}&ext=ts&title=${encodeURIComponent(cleanName(c.name))}`} item={{ id: c.stream_id, name: c.name, poster: c.stream_icon, subtitle: "Canlı" }} />
             ))}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
-  Oynat, Pause, Volume2, VolumeX, Maximize, Minimize,
+  Play, Pause, Volume2, VolumeX, Maximize, Minimize,
   PictureInPicture2, Loader2, AlertTriangle, SkipForward, ArrowLeft,
   RotateCcw, RotateCw, Captions, Gauge, Check, Upload,
 } from "lucide-react";
@@ -19,10 +19,10 @@ function srtToVtt(text: string): string {
   return /^WEBVTT/.test(body.trimStart()) ? body : `WEBVTT\n\n${body}`;
 }
 
-export function VideoOynater({
+export function VideoPlayer({
   sources,
   ext,
-  isCanlı,
+  isLive,
   title,
   startTime = 0,
   hasNext,
@@ -36,7 +36,7 @@ export function VideoOynater({
   /** Ordered candidate URLs — first is tried, next used on failure (direct → proxy). */
   sources: string[];
   ext: string;
-  isCanlı: boolean;
+  isLive: boolean;
   title: string;
   startTime?: number;
   hasNext?: boolean;
@@ -56,7 +56,7 @@ export function VideoOynater({
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const subFileRef = useRef<HTMLInputElement>(null);
 
-  const [playing, setOynating] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [volume, setVolume] = useState(1);
   const [current, setCurrent] = useState(0);
@@ -82,7 +82,7 @@ export function VideoOynater({
   const isTranscode = !!rawSrc && rawSrc.includes("/api/transcode");
   // appending &t= makes the attach effect reload ffmpeg from that timestamp
   const src = isTranscode && seekBase > 0 ? `${rawSrc}&t=${Math.floor(seekBase)}` : rawSrc;
-  const seekable = !isCanlı; // transcoded streams seek by reloading
+  const seekable = !isLive; // transcoded streams seek by reloading
   const total = isTranscode && knownDuration > 0 ? knownDuration : duration;
   const displayCurrent = isTranscode ? seekBase + current : current;
 
@@ -117,11 +117,11 @@ export function VideoOynater({
     (async () => {
       try {
         engineRef.current?.destroy();
-        engineRef.current = await attach(video, { url: src, ext, isCanlı });
+        engineRef.current = await attach(video, { url: src, ext, isLive });
         if (cancelled) return;
         video.play().catch(() => {});
       } catch (e) {
-        if (!cancelled) tryFallback((e as Error).message || "Oynatback failed");
+        if (!cancelled) tryFallback((e as Error).message || "Oynatma başarısız.");
       }
     })();
 
@@ -148,23 +148,23 @@ export function VideoOynater({
       engineRef.current?.destroy();
       engineRef.current = null;
     };
-  }, [src, ext, isCanlı, tryFallback, srcIdx, sources.length]);
+  }, [src, ext, isLive, tryFallback, srcIdx, sources.length]);
 
   // media element events
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    const onOynat = () => setOynating(true);
-    const onPause = () => setOynating(false);
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
     const onWaiting = () => setBuffering(true);
-    const onOynating = () => {
+    const onPlaying = () => {
       setBuffering(false);
       setError(null); // recovered (e.g. slow start after the watchdog fired)
     };
     const onLoaded = () => {
       setDuration(v.duration || 0);
       // native VOD resumes via currentTime; transcoded streams resume via ?t= reload
-      if (!isCanlı && !isTranscode && startTime > 0 && startTime < (v.duration || Infinity)) {
+      if (!isLive && !isTranscode && startTime > 0 && startTime < (v.duration || Infinity)) {
         v.currentTime = startTime;
       }
     };
@@ -182,25 +182,25 @@ export function VideoOynater({
     const onErr = () =>
       tryFallback("This title isn’t available from your provider right now, or can’t be played in the browser. Try another title.");
 
-    v.addEventListener("play", onOynat);
+    v.addEventListener("play", onPlay);
     v.addEventListener("pause", onPause);
     v.addEventListener("waiting", onWaiting);
-    v.addEventListener("playing", onOynating);
+    v.addEventListener("playing", onPlaying);
     v.addEventListener("loadedmetadata", onLoaded);
     v.addEventListener("timeupdate", onTime);
     v.addEventListener("ended", onEnd);
     v.addEventListener("error", onErr);
     return () => {
-      v.removeEventListener("play", onOynat);
+      v.removeEventListener("play", onPlay);
       v.removeEventListener("pause", onPause);
       v.removeEventListener("waiting", onWaiting);
-      v.removeEventListener("playing", onOynating);
+      v.removeEventListener("playing", onPlaying);
       v.removeEventListener("loadedmetadata", onLoaded);
       v.removeEventListener("timeupdate", onTime);
       v.removeEventListener("ended", onEnd);
       v.removeEventListener("error", onErr);
     };
-  }, [ext, isCanlı, startTime, onProgress, onEnded, tryFallback, isTranscode, knownDuration, seekBase]);
+  }, [ext, isLive, startTime, onProgress, onEnded, tryFallback, isTranscode, knownDuration, seekBase]);
 
   useEffect(() => {
     const onFs = () => setFullscreen(!!document.fullscreenElement);
@@ -208,7 +208,7 @@ export function VideoOynater({
     return () => document.removeEventListener("fullscreenchange", onFs);
   }, []);
 
-  const toggleOynat = useCallback(() => {
+  const togglePlay = useCallback(() => {
     const v = videoRef.current;
     if (!v) return;
     if (v.paused) v.play().catch(() => {});
@@ -217,7 +217,7 @@ export function VideoOynater({
 
   const seek = useCallback(
     (t: number) => {
-      if (isCanlı) return;
+      if (isLive) return;
       const target = Math.max(0, Math.min(t, total || Infinity));
       if (isTranscode) {
         // restart ffmpeg from the new offset (the attach effect reloads on src change)
@@ -228,7 +228,7 @@ export function VideoOynater({
         if (v) v.currentTime = target;
       }
     },
-    [isCanlı, isTranscode, total],
+    [isLive, isTranscode, total],
   );
 
   const toggleMute = useCallback(() => {
@@ -338,7 +338,7 @@ export function VideoOynater({
     const onKey = (e: KeyboardEvent) => {
       if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) return;
       switch (e.key) {
-        case " ": e.preventDefault(); toggleOynat(); break;
+        case " ": e.preventDefault(); togglePlay(); break;
         case "ArrowRight": if (seekable) seek(displayCurrent + 10); break;
         case "ArrowLeft": if (seekable) seek(displayCurrent - 10); break;
         case "ArrowUp": changeVolume(Math.min(1, volume + 0.1)); break;
@@ -355,7 +355,7 @@ export function VideoOynater({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [displayCurrent, volume, seekable, toggleOynat, seek, toggleFs, toggleMute, onBack, showControls, trackList, activeTrack, selectTrack, hasNext, onNext]);
+  }, [displayCurrent, volume, seekable, togglePlay, seek, toggleFs, toggleMute, onBack, showControls, trackList, activeTrack, selectTrack, hasNext, onNext]);
 
   return (
     <div
@@ -371,7 +371,7 @@ export function VideoOynater({
         ref={videoRef}
         className="absolute inset-0 h-full w-full object-contain"
         playsInline
-        onClick={toggleOynat}
+        onClick={togglePlay}
         onDoubleClick={toggleFs}
       >
         {extSubs.map((s, i) => (
@@ -431,9 +431,9 @@ export function VideoOynater({
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div className="min-w-0 pt-1">
-          {isCanlı && (
+          {isLive && (
             <span className="mb-1 inline-flex items-center gap-1.5 rounded bg-red-600 px-2 py-0.5 text-xs font-bold uppercase tracking-wide">
-              <span className="h-1.5 w-1.5 rounded-full bg-white" /> Canlı
+              <span className="h-1.5 w-1.5 rounded-full bg-white" /> Live
             </span>
           )}
           <h2 className="truncate text-lg font-semibold drop-shadow">{title}</h2>
@@ -448,7 +448,7 @@ export function VideoOynater({
         )}
       >
         {/* seek bar (VOD) */}
-        {!isCanlı && (
+        {!isLive && (
           <div className="mb-3 flex items-center gap-3 text-xs tabular-nums text-fog-300">
             <span className="w-12 text-right">{formatTime(scrub ?? displayCurrent)}</span>
             <input
@@ -475,8 +475,8 @@ export function VideoOynater({
         )}
 
         <div className="flex items-center gap-3 sm:gap-4">
-          <button onClick={toggleOynat} className="text-white transition-transform hover:scale-110" title="Oynat/Pause (space)">
-            {playing ? <Pause className="h-7 w-7 fill-white" /> : <Oynat className="h-7 w-7 fill-white" />}
+          <button onClick={togglePlay} className="text-white transition-transform hover:scale-110" title="Play/Pause (space)">
+            {playing ? <Pause className="h-7 w-7 fill-white" /> : <Play className="h-7 w-7 fill-white" />}
           </button>
 
           {seekable && (
@@ -492,7 +492,7 @@ export function VideoOynater({
             </>
           )}
 
-          {!isCanlı && hasNext && (
+          {!isLive && hasNext && (
             <button onClick={onNext} className="text-white/90 transition-transform hover:scale-110" title="Next episode (n)">
               <SkipForward className="h-6 w-6 fill-white/90" />
             </button>
@@ -547,7 +547,7 @@ export function VideoOynater({
                       </button>
                     ))}
                     {trackList.length === 0 && (
-                      <p className="px-3 py-1.5 text-xs text-fog-500">No embedded captions found.</p>
+                      <p className="px-3 py-1.5 text-xs text-fog-500">Gömülü altyazı bulunamadı.</p>
                     )}
                     <div className="my-1 h-px bg-white/10" />
                     <button
@@ -562,12 +562,12 @@ export function VideoOynater({
             </div>
 
             {/* playback speed */}
-            {!isCanlı && (
+            {!isLive && (
               <div className="relative">
                 <button
                   onClick={() => setSpeedMenu((v) => !v)}
                   className={cn("flex items-center gap-1 transition-transform hover:scale-110", speed !== 1 ? "text-iris-400" : "text-white/90")}
-                  title="Oynatback speed"
+                  title="Oynatma hızı"
                 >
                   <Gauge className="h-6 w-6" />
                   {speed !== 1 && <span className="text-xs font-semibold">{speed}x</span>}

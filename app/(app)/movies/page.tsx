@@ -2,12 +2,12 @@
 
 import { TopBar } from "@/components/layout/TopBar";
 import { CatalogBrowser } from "@/components/catalog/CatalogBrowser";
-import { useVodKategoriler, useVodStreams } from "@/lib/hooks";
+import { useVodCategories, useVodStreams } from "@/lib/hooks";
 import type { VodStream } from "@/lib/xtream/types";
 import { yearFrom } from "@/lib/utils";
 
 export default function MoviesPage() {
-  const { data: cats = [] } = useVodKategoriler();
+  const { data: cats = [] } = useVodCategories();
 
   return (
     <>

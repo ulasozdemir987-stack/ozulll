@@ -8,15 +8,15 @@ import { type HeroItem } from "@/components/catalog/Hero";
 import { Shelf } from "@/components/catalog/Shelf";
 import { PosterCard } from "@/components/catalog/PosterCard";
 import { PosterSkeletonRow, Skeleton } from "@/components/ui/Skeleton";
-import { useVodKategoriler, useSeriesKategoriler, useVodStreams, useSeriesList } from "@/lib/hooks";
+import { useVodCategories, useSeriesCategories, useVodStreams, useSeriesList } from "@/lib/hooks";
 import { useLibrary, continueWatching } from "@/store/library";
 import { sortItems, yearFrom, ratingNum } from "@/lib/utils";
 
 const CARD = "w-[140px] shrink-0 sm:w-[165px]";
 
 export default function HomePage() {
-  const vodCats = useVodKategoriler();
-  const seriesCats = useSeriesKategoriler();
+  const vodCats = useVodCategories();
+  const seriesCats = useSeriesCategories();
   const { progress } = useLibrary();
   const cw = useMemo(() => continueWatching(progress), [progress]);
 
@@ -55,7 +55,7 @@ export default function HomePage() {
 
   return (
     <>
-      <TopBar title="Ana Sayfa" />
+      <TopBar title="IPTV" />
 
       <div className="space-y-8 px-5 pt-6 sm:px-8">
         <KineticTitle eyebrow="Tekrar hoş geldin" text="Bu akşam ne izlemek istersin?" />

@@ -2,12 +2,12 @@
 
 import { TopBar } from "@/components/layout/TopBar";
 import { CatalogBrowser } from "@/components/catalog/CatalogBrowser";
-import { useSeriesKategoriler, useSeriesList } from "@/lib/hooks";
+import { useSeriesCategories, useSeriesList } from "@/lib/hooks";
 import type { Series } from "@/lib/xtream/types";
 import { yearFrom } from "@/lib/utils";
 
 export default function SeriesPage() {
-  const { data: cats = [] } = useSeriesKategoriler();
+  const { data: cats = [] } = useSeriesCategories();
 
   return (
     <>

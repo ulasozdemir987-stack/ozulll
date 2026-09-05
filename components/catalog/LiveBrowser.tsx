@@ -2,20 +2,20 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { LayoutGrid, List, Oynat, Tv, Heart } from "lucide-react";
-import { useCanlıKategoriler, useCanlıStreams, useEpg } from "@/lib/hooks";
+import { LayoutGrid, List, Play, Tv, Heart } from "lucide-react";
+import { useLiveCategories, useLiveStreams, useEpg } from "@/lib/hooks";
 import { FilterBar } from "./FilterBar";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { PosterGridSkeleton } from "@/components/ui/Skeleton";
 import { useLibrary } from "@/store/library";
 import { useUI, DEFAULT_FILTER } from "@/store/ui";
 import { sortItems, type SortKey, cleanName, cn } from "@/lib/utils";
-import type { CanlıStream } from "@/lib/xtream/types";
+import type { LiveStream } from "@/lib/xtream/types";
 
 const PAGE = 80;
 
-export function CanlıBrowser() {
-  const { data: cats = [] } = useCanlıKategoriler();
+export function LiveBrowser() {
+  const { data: cats = [] } = useLiveCategories();
   const filter = useUI((s) => s.filters.live ?? DEFAULT_FILTER);
   const patchFilter = useUI((s) => s.patchFilter);
   const category = filter.category || "all"; // live defaults to All (its full list is small)
@@ -27,7 +27,7 @@ export function CanlıBrowser() {
   const setQuery = (q: string) => patchFilter("live", { query: q });
   const setView = (v: "grid" | "list") => patchFilter("live", { view: v });
 
-  const { data, isLoading, isError, error } = useCanlıStreams(category === "all" ? undefined : category);
+  const { data, isLoading, isError, error } = useLiveStreams(category === "all" ? undefined : category);
 
   const filtered = useMemo(() => {
     let items = data ?? [];
@@ -105,11 +105,11 @@ function ViewBtn({ active, onClick, children }: { active: boolean; onClick: () =
   );
 }
 
-function watchHref(c: CanlıStream) {
+function watchHref(c: LiveStream) {
   return `/watch?type=live&id=${c.stream_id}&ext=ts&title=${encodeURIComponent(cleanName(c.name))}`;
 }
 
-function ChannelTile({ channel }: { channel: CanlıStream }) {
+function ChannelTile({ channel }: { channel: LiveStream }) {
   const { isFav, toggleFav } = useLibrary();
   const fav = isFav("live", channel.stream_id);
   return (
@@ -144,14 +144,14 @@ function ChannelTile({ channel }: { channel: CanlıStream }) {
       <p className="line-clamp-2 text-center text-sm font-medium leading-snug">{cleanName(channel.name)}</p>
       <span className="absolute inset-0 grid place-items-center rounded-[--radius-card] bg-ink-950/40 opacity-0 transition-opacity group-hover:opacity-100">
         <span className="grid h-11 w-11 place-items-center rounded-full bg-iris-400 text-ink-950">
-          <Oynat className="h-5 w-5 translate-x-0.5 fill-ink-950" />
+          <Play className="h-5 w-5 translate-x-0.5 fill-ink-950" />
         </span>
       </span>
     </Link>
   );
 }
 
-function ChannelRow({ channel }: { channel: CanlıStream }) {
+function ChannelRow({ channel }: { channel: LiveStream }) {
   const ref = useRef<HTMLAnchorElement>(null);
   const [seen, setSeen] = useState(false);
   useEffect(() => {
@@ -202,7 +202,7 @@ function ChannelRow({ channel }: { channel: CanlıStream }) {
       </div>
       {next && <p className="hidden w-40 shrink-0 truncate text-right text-xs text-fog-500 md:block">Next: {next.title}</p>}
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink-800 text-fog-400 transition-colors group-hover:bg-iris-400 group-hover:text-ink-950">
-        <Oynat className="h-4 w-4 translate-x-0.5" />
+        <Play className="h-4 w-4 translate-x-0.5" />
       </span>
     </Link>
   );

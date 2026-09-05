@@ -3,18 +3,18 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Oynat, Star, Calendar, Clock } from "lucide-react";
+import { Play, Star, Calendar, Clock } from "lucide-react";
 import { DetailHero } from "@/components/catalog/DetailHero";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { useSeriesBilgi } from "@/lib/hooks";
+import { useSeriesInfo } from "@/lib/hooks";
 import { useLibrary } from "@/store/library";
 import { ratingNum, yearFrom, cleanName, cn } from "@/lib/utils";
 import type { Episode } from "@/lib/xtream/types";
 
 export default function SeriesDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading, isError } = useSeriesBilgi(id);
+  const { data, isLoading, isError } = useSeriesInfo(id);
   const { isFav, toggleFav, progress } = useLibrary();
 
   const seasons = useMemo(() => {
@@ -29,7 +29,7 @@ export default function SeriesDetailPage() {
   const activeSeason = season ?? seasons[0] ?? null;
 
   if (isLoading) return <SeriesSkeleton />;
-  if (isError || !data) return <p className="px-8 py-24 text-center text-red-300">Dizi yüklenemedi.</p>;
+  if (isError || !data) return <p className="px-8 py-24 text-center text-red-300">Couldn’t load this series.</p>;
 
   const info = data.info;
   const title = (info?.name as string) || "Diziler";
@@ -113,7 +113,7 @@ function EpisodeRow({
         <SmartImage src={ep.info?.movie_image} alt={epTitle} rounded="rounded-lg" className="h-full w-full" />
         <span className="absolute inset-0 grid place-items-center bg-ink-950/30 opacity-0 transition-opacity group-hover:opacity-100">
           <span className="grid h-9 w-9 place-items-center rounded-full bg-iris-400 text-ink-950">
-            <Oynat className="h-4 w-4 translate-x-0.5 fill-ink-950" />
+            <Play className="h-4 w-4 translate-x-0.5 fill-ink-950" />
           </span>
         </span>
       </div>

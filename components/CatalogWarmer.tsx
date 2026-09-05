@@ -10,7 +10,7 @@ let warmed = false;
 
 /**
  * After login, quietly warm the catalog in the background so navigating to
- * Movies/Series/Canlı is instant (the provider's first fetch is slow). Mounted
+ * Movies/Series/Live is instant (the provider's first fetch is slow). Mounted
  * once in the app shell; never blocks the UI.
  */
 export function CatalogWarmer() {
@@ -28,10 +28,10 @@ export function CatalogWarmer() {
 
       // category lists are small + fast — these make the filter bars instant
       const [vodCats, seriesCats] = await Promise.all([
-        qc.fetchQuery({ queryKey: ["vod", "cats"], queryFn: api.vodKategoriler }).catch(() => [] as Category[]),
-        qc.fetchQuery({ queryKey: ["series", "cats"], queryFn: api.seriesKategoriler }).catch(() => [] as Category[]),
+        qc.fetchQuery({ queryKey: ["vod", "cats"], queryFn: api.vodCategories }).catch(() => [] as Category[]),
+        qc.fetchQuery({ queryKey: ["series", "cats"], queryFn: api.seriesCategories }).catch(() => [] as Category[]),
       ]);
-      qc.prefetchQuery({ queryKey: ["live", "cats"], queryFn: api.liveKategoriler });
+      qc.prefetchQuery({ queryKey: ["live", "cats"], queryFn: api.liveCategories });
       if (cancelled) return;
 
       // warm the first category of each (what those pages open to) — cheap (~400ms)

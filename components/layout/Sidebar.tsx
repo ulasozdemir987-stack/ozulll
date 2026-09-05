@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Tv, Film, MonitorOynat, Search, Heart, Radio } from "lucide-react";
+import { Home, Tv, Film, MonitorPlay, Search, Heart, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -10,7 +10,7 @@ const NAV = [
   { href: "/live", label: "Canlı TV", icon: Tv },
   { href: "/freetv", label: "Ücretsiz TV", icon: Radio },
   { href: "/movies", label: "Filmler", icon: Film },
-  { href: "/series", label: "Diziler", icon: MonitorOynat },
+  { href: "/series", label: "Diziler", icon: MonitorPlay },
   { href: "/search", label: "Ara", icon: Search },
   { href: "/favourites", label: "Listem", icon: Heart },
 ];
@@ -21,7 +21,7 @@ export function Sidebar() {
     <aside className="sticky top-0 z-30 hidden h-dvh w-[84px] shrink-0 flex-col items-center gap-1 border-r border-white/8 bg-ink-950/40 py-6 backdrop-blur-2xl lg:flex">
       <Link href="/" className="mb-6 flex flex-col items-center gap-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.svg" alt="Logo" className="h-11 w-11 rounded-2xl shadow-lg shadow-iris-400/30" />
+        <img src="/logo.svg" alt="IPTV" className="h-11 w-11 rounded-2xl shadow-lg shadow-iris-400/30" />
       </Link>
       {NAV.map(({ href, label, icon: Icon, exact }) => {
         const active = exact ? path === href : path === href || path.startsWith(href + "/");

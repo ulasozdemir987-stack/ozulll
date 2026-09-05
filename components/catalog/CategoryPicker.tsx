@@ -98,7 +98,7 @@ export function CategoryPicker({
                 />
               ))}
               {filtered.length === 0 && (
-                <p className="px-3 py-6 text-center text-sm text-fog-500">No matching categories.</p>
+                <p className="px-3 py-6 text-center text-sm text-fog-500">Eşleşen kategori bulunamadı.</p>
               )}
             </div>
           </motion.div>

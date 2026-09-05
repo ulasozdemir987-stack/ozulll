@@ -59,8 +59,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="Logo" className="mb-4 h-16 w-16 rounded-2xl shadow-xl glow-iris" />
-          <h1 className="text-3xl font-bold tracking-tight">IPTV</h1>
+          <img src="/logo.svg" alt="IPTV" className="mb-4 h-16 w-16 rounded-2xl shadow-xl glow-iris" />
+          <h1 className="text-3xl font-bold tracking-tight">Lumen</h1>
           <p className="mt-1.5 text-sm text-fog-400">
             İzlemek için bir hesap seçin veya yeni hesap ekleyin.
           </p>
@@ -117,8 +117,8 @@ export default function LoginPage() {
             }}
             className="space-y-3.5 rounded-3xl glass p-6"
           >
-            <Field label="Sunucu adresi" placeholder="https://sunucu-adresi:443" value={baseUrl} onChange={setBaseUrl} autoFocus />
-            <Field label="Kullanıcı adı" placeholder="kullanıcı adı" value={username} onChange={setUsername} />
+            <Field label="Sunucu adresi" placeholder="http://your-provider.com:8080" value={baseUrl} onChange={setBaseUrl} autoFocus />
+            <Field label="Kullanıcı adı" placeholder="username" value={username} onChange={setUsername} />
             <Field label="Şifre" placeholder="••••••••" type="password" value={password} onChange={setPassword} />
             <Field label="Hesap adı (isteğe bağlı)" placeholder="IPTV hesabım" value={label} onChange={setLabel} />
 

@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import Tilt from "react-parallax-tilt";
 import { useQueryClient } from "@tanstack/react-query";
-import { Oynat, Star } from "lucide-react";
+import { Play, Star } from "lucide-react";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { api } from "@/lib/api";
 import { cleanName, ratingNum, yearFrom, cn } from "@/lib/utils";
@@ -44,9 +44,9 @@ export function PosterCard({
       const movie = href.match(/^\/movies\/(\d+)/);
       const series = href.match(/^\/series\/(\d+)/);
       if (movie) {
-        qc.prefetchQuery({ queryKey: ["vod", "info", movie[1]], queryFn: () => api.vodBilgi(movie[1]) });
+        qc.prefetchQuery({ queryKey: ["vod", "info", movie[1]], queryFn: () => api.vodInfo(movie[1]) });
       } else if (series) {
-        qc.prefetchQuery({ queryKey: ["series", "info", series[1]], queryFn: () => api.seriesBilgi(series[1]) });
+        qc.prefetchQuery({ queryKey: ["series", "info", series[1]], queryFn: () => api.seriesInfo(series[1]) });
       }
     }, 220);
   };
@@ -98,7 +98,7 @@ export function PosterCard({
           className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full glass-bright opacity-0 transition-all duration-300 group-hover:opacity-100"
           style={{ transform: "translate(-50%, -50%) translateZ(50px)" }}
         >
-          <Oynat className="h-6 w-6 translate-x-0.5 fill-iris-300 text-iris-300" />
+          <Play className="h-6 w-6 translate-x-0.5 fill-iris-300 text-iris-300" />
         </span>
 
         {/* title overlay */}

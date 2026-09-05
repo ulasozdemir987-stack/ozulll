@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Oynat, Bilgi, Star } from "lucide-react";
+import { Play, Info, Star } from "lucide-react";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { cleanName } from "@/lib/utils";
 
@@ -78,13 +78,13 @@ export function Hero({ items }: { items: HeroItem[] }) {
               href={item.playHref}
               className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 font-semibold text-ink-950 transition-transform hover:scale-[1.03]"
             >
-              <Oynat className="h-5 w-5 fill-ink-950" /> Oynat
+              <Play className="h-5 w-5 fill-ink-950" /> Play
             </Link>
             <Link
               href={item.detailHref}
               className="flex items-center gap-2 rounded-xl glass px-5 py-2.5 font-medium text-foreground transition-colors hover:bg-ink-700/70"
             >
-              <Bilgi className="h-5 w-5" /> More Bilgi
+              <Info className="h-5 w-5" /> More Info
             </Link>
           </div>
 

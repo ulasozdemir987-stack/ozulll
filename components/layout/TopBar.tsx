@@ -37,7 +37,7 @@ export function TopBar({ title }: { title?: string }) {
   return (
     <header className="sticky top-0 z-20 flex items-center gap-4 border-b border-white/5 bg-ink-950/70 px-5 py-3.5 backdrop-blur-xl sm:px-8">
       <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-        {title}
+        {title ?? "IPTV"}
       </h1>
 
       <form onSubmit={submitSearch} className="ml-auto hidden sm:block">
@@ -74,7 +74,7 @@ export function TopBar({ title }: { title?: string }) {
             </div>
             <dl className="space-y-2 text-sm">
               <Row label="Kullanıcı" value={data?.username ?? "—"} />
-              <Row label="Durum" value={data?.user_info?.status === "Active" ? "Aktif" : data?.user_info?.status ?? "—"} />
+              <Row label="Durum" value={data?.user_info?.status ?? "—"} />
               <Row label="Bitiş tarihi" value={expiry} />
               <Row
                 label="Bağlantılar"

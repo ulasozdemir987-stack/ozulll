@@ -53,7 +53,7 @@ export const api = {
       credentials: "same-origin",
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data?.error || "Login failed");
+    if (!res.ok) throw new Error(data?.error || "Giriş başarısız.");
     return data as { ok: true; user_info: AuthResponse["user_info"]; server_info: AuthResponse["server_info"] };
   },
 

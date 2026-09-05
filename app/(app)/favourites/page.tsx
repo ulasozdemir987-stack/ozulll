@@ -31,7 +31,7 @@ export default function FavouritesPage() {
               <PosterCard key={s.id} href={`/series/${s.id}`} item={{ id: s.id, name: s.name, poster: s.poster }} />
             ))}
           </Section>
-          <Section title="Canlı Channels" count={favourites.live.length}>
+          <Section title="Canlı Kanallar" count={favourites.live.length}>
             {favourites.live.map((c) => (
               <PosterCard
                 key={c.id}

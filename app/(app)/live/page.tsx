@@ -1,13 +1,13 @@
 "use client";
 
 import { TopBar } from "@/components/layout/TopBar";
-import { CanlıBrowser } from "@/components/catalog/CanlıBrowser";
+import { LiveBrowser } from "@/components/catalog/LiveBrowser";
 
-export default function CanlıPage() {
+export default function LivePage() {
   return (
     <>
       <TopBar title="Canlı TV" />
-      <CanlıBrowser />
+      <LiveBrowser />
     </>
   );
 }
