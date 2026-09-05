@@ -119,7 +119,13 @@ export function VideoPlayer({
         engineRef.current?.destroy();
         engineRef.current = await attach(video, { url: src, ext, isLive });
         if (cancelled) return;
-        video.play().catch(() => {});
+        // Some browsers reject autoplay with sound after a route navigation.
+        // Retry muted so live TV can still start; the user can unmute from the controls.
+        video.play().catch(() => {
+          video.muted = true;
+          setMuted(true);
+          video.play().catch(() => {});
+        });
       } catch (e) {
         if (!cancelled) tryFallback((e as Error).message || "Oynatma başarısız.");
       }
@@ -139,7 +145,7 @@ export function VideoPlayer({
           setError("Couldn’t start this channel — it may be offline, geo-blocked, or not broadcasting right now. Try another.");
         }
       },
-      isLastSource ? 30000 : 12000,
+      isLastSource ? 22000 : 9000,
     );
 
     return () => {

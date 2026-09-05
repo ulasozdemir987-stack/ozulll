@@ -76,8 +76,10 @@ function WatchInner() {
     // Ücretsiz TV: a public m3u8 played straight through the HLS proxy.
     if (type === "freetv") return freeUrl ? [freeTvSrc(freeUrl)] : [];
     const proxy = streamSrc(mediaKind, id, ext);
-    // Live: HLS first (smooth, self-healing, adaptive) → raw MPEG-TS proxy fallback.
-    if (isLive) return [`/api/hls?id=${id}`, proxy];
+    // Live: try the real TS stream through our same-origin proxy first.
+    // This avoids waiting on providers that do not expose a working .m3u8 endpoint.
+    // HLS remains the fallback for providers that publish HLS instead of raw TS.
+    if (isLive) return [proxy, `/api/hls?id=${id}`];
     // VOD chain: [direct (only if the probe says browsers are allowed)] → proxy →
     // ffmpeg remux (handles MKV/AVI the browser can't decode natively).
     const transcode = transcodeSrc(mediaKind, id, ext);

@@ -71,8 +71,8 @@ export async function attach(
       const player = mpegts.createPlayer(
         { type: "mpegts", isLive: opts.isLive, url: opts.url },
         {
-          enableStashBuffer: false, // start playing ASAP, don't pre-buffer
-          stashInitialSize: 128,
+          enableStashBuffer: true, // keep a small live buffer so bursty IPTV TS streams do not underrun immediately
+          stashInitialSize: 384,
           lazyLoad: false,
           liveBufferLatencyChasing: opts.isLive,
           liveBufferLatencyChasingOnPaused: false,
@@ -83,6 +83,12 @@ export async function attach(
       );
       player.attachMediaElement(video);
       player.load();
+      // mpegts.js may not trigger a native autoplay attempt by itself.
+      // Try normal autoplay first; if the browser blocks audio autoplay, retry muted.
+      player.play().catch(() => {
+        video.muted = true;
+        video.play().catch(() => {});
+      });
       return {
         kind: "mpegts",
         destroy: () => {
